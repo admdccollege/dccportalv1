@@ -1,4 +1,4 @@
-import { createServerClient } from "@supabase/ssr";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
 export const REMEMBER_COOKIE = "dcc-remember";
@@ -12,7 +12,7 @@ export async function createClient() {
     {
       cookies: {
         getAll: () => store.getAll(),
-        setAll(list) {
+        setAll(list: { name: string; value: string; options: CookieOptions }[]) {
           try {
             for (const { name, value, options } of list) {
               // Without "Remember me", the session ends when the browser closes.
