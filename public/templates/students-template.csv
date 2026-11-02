@@ -1,4 +1,4 @@
-tier,enrollment_no,full_name,date_of_birth,gender,phone,email,address,residential_category,guardian_name,guardian_relation,guardian_phone,guardian_email,class_level,stream,council_reg_no,combination_subjects,degree,major_subject,minor_subject,semester,university_roll_no,university_reg_no,department_code,specialization,previous_degree,previous_degree_verified
-HS,DCC-HS-0001,Sample Student One,2010-01-15,,,,,day_scholar,Sample Guardian One,Father,9000000001,,XI,Science,,Physics; Chemistry; Mathematics,,,,,,,,,,
-UG,DCC-UG-0001,Sample Student Two,2007-05-20,,,,,hostel,Sample Guardian Two,Mother,9000000002,,,,,,B.A.,History,English,1,,,,,,
-PG,DCC-PG-0001,Sample Student Three,2003-09-10,,,,,day_scholar,Sample Guardian Three,Father,9000000003,,,,,,,,,1,,,HIS,Modern History,B.A.,yes
+tier,program_code,enrollment_no,full_name,date_of_birth,gender,phone,email,address,residential_category,guardian_name,guardian_relation,guardian_phone,guardian_email,class_level,stream,council_reg_no,combination_subjects,degree,major_subject,minor_subject,semester,university_roll_no,university_reg_no,department_code,specialization,previous_degree,previous_degree_verified
+HS,,DCC-HS-0001,Sample Student One,2010-01-15,,,,,day_scholar,Sample Guardian One,Father,9000000001,,XI,Science,,Physics; Chemistry; Mathematics,,,,,,,,,,
+UG,,DCC-UG-0001,Sample Student Two,2007-05-20,,,,,hostel,Sample Guardian Two,Mother,9000000002,,,,,,B.A.,History,English,1,,,,,,
+PG,,DCC-PG-0001,Sample Student Three,2003-09-10,,,,,day_scholar,Sample Guardian Three,Father,9000000003,,,,,,,,,1,,,HIS,Modern History,B.A.,yes

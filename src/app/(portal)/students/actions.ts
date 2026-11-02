@@ -25,7 +25,13 @@ async function onboard(input: StudentInput): Promise<Credential[]> {
   const admin = createAdminClient();
   const credentials: Credential[] = [];
   const { guardian_name, guardian_relation, guardian_phone, guardian_email, ...rest } = input;
-  const record: Record<string, unknown> = { ...rest };
+  const { program_code, ...fields } = rest;
+  const record: Record<string, unknown> = { ...fields };
+  if (program_code) {
+    const { data: program } = await admin.from("programs").select("id, tier").eq("code", program_code).maybeSingle();
+    if (!program || program.tier !== input.tier) throw new Error(`Unknown program code "${program_code}" for this tier.`);
+    record.program_id = program.id;
+  }
   if (input.tier === "postgraduate") {
     const { data: dept } = await admin.from("departments").select("id").eq("code", input.department_code).maybeSingle();
     if (!dept) throw new Error(`Unknown department code "${input.department_code}".`);

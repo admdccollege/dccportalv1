@@ -29,3 +29,14 @@ jobs:
       - run: npm run typecheck
       - run: npm run test:unit
       - run: npm run build
+      - name: Smoke test the production server
+        run: |
+          npx next start -p 3100 > server.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf -o /dev/null http://localhost:3100/manifest.json && break; sleep 1; done
+          curl -s http://localhost:3100/login | grep -q 'Damdei Christian College'
+          curl -s http://localhost:3100/manifest.json | grep -q '"display": "standalone"'
+          curl -s http://localhost:3100/sw.js | grep -q 'attendance-sync'
+          curl -s -o /dev/null -w '%{http_code} %{redirect_url}\n' http://localhost:3100/dashboard | grep -q '/login'
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3100/api/receipt/x)" = "401"
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3100/api/cron/daily)" = "401"
+          curl -s http://localhost:3100/offline | grep -q 'offline'

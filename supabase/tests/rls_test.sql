@@ -222,6 +222,11 @@ select t_ok((select array_agg(body) from student_remarks)='{Shared}','parent see
 set request.jwt.sub='00000000-0000-0000-0000-000000000005';
 select t_ok((select count(*) from student_remarks)=0,'other students see no remarks');
 
+-- Teacher names for family views.
+set request.jwt.sub='00000000-0000-0000-0000-000000000004';
+select t_ok((select count(*) from profiles)=1,'student cannot read staff profiles');
+select t_ok((select count(*) from faculty_names(array['00000000-0000-0000-0000-000000000002'::uuid,'00000000-0000-0000-0000-000000000005'::uuid]))=1,'faculty_names returns teachers only');
+
 -- Anonymous access.
 set role anon; set request.jwt.sub='';
 select t_err($$select * from students$$,'denied|permission','anon cannot read students') where false;

@@ -80,9 +80,13 @@ export async function assignStructure(_: ActionState, form: FormData): Promise<A
     await assertRole(ADMIN);
     const id = z.string().uuid().parse(form.get("structure_id"));
     const supabase = await createClient();
-    const { data: fs } = await supabase.from("fee_structures").select("tier, program_id").eq("id", id).single();
+    const { data: fs } = await supabase.from("fee_structures").select("tier, program_id, period_no").eq("id", id).single();
     let query = supabase.from("students").select("id").eq("status", "active").eq("tier", fs!.tier);
     if (fs!.program_id) query = query.eq("program_id", fs!.program_id);
+    // XI = 1 and XII = 2 for Higher Secondary; the semester number for UG and PG.
+    query = fs!.tier === "higher_secondary"
+      ? query.eq("class_level", fs!.period_no === 1 ? "XI" : "XII")
+      : query.eq("semester", fs!.period_no);
     const { data: students } = await query;
     const ids = ((students ?? []) as { id: string }[]).map((s) => s.id);
     if (!ids.length) return { error: "No active students match this fee structure." };

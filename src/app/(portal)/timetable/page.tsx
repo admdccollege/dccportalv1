@@ -7,7 +7,7 @@ import { addSlot, removeSlot } from "./actions";
 export const metadata: Metadata = { title: "Timetable" };
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 const time = (m: number) => `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
-type Slot = { id: string; weekday: number; start_minute: number; end_minute: number; room: string | null; section_id: string; faculty_id: string; sections: { name: string; courses: { code: string; title: string } }; profiles: { full_name: string } };
+type Slot = { id: string; weekday: number; start_minute: number; end_minute: number; room: string | null; section_id: string; faculty_id: string; sections: { name: string; courses: { code: string; title: string } } };
 type Section = { id: string; name: string; courses: { code: string; title: string }; terms: { label: string } };
 
 export default async function TimetablePage() {
@@ -16,7 +16,7 @@ export default async function TimetablePage() {
   const isAdmin = ["super_admin", "management", "principal"].includes(profile.role);
   const { data: year } = await supabase.from("academic_years").select("id, label").eq("is_current", true).maybeSingle();
   if (!year) return <><h1 className="page-title">Timetable</h1><p className="card">No current academic year has been set up.</p></>;
-  let query = supabase.from("timetable_slots").select("id, weekday, start_minute, end_minute, room, section_id, faculty_id, sections(name, courses(code, title)), profiles(full_name)")
+  let query = supabase.from("timetable_slots").select("id, weekday, start_minute, end_minute, room, section_id, faculty_id, sections(name, courses(code, title))")
     .eq("academic_year_id", year.id).order("weekday").order("start_minute");
   if (profile.role === "faculty") query = query.eq("faculty_id", profile.id);
   if (profile.role === "student" || profile.role === "parent") {
@@ -25,6 +25,8 @@ export default async function TimetablePage() {
   }
   const { data } = await query;
   const slots = (data ?? []) as unknown as Slot[];
+  const { data: teacherRows } = slots.length ? await supabase.rpc("faculty_names", { p_ids: [...new Set(slots.map((s) => s.faculty_id))] }) : { data: [] };
+  const teachers = new Map(((teacherRows ?? []) as { id: string; full_name: string }[]).map((t) => [t.id, t.full_name]));
   const [sections, faculty, workload] = isAdmin ? await Promise.all([
     supabase.from("sections").select("id, name, courses!inner(code, title), terms!inner(label, academic_year_id)").eq("terms.academic_year_id", year.id),
     supabase.from("profiles").select("id, full_name").in("role", ["faculty", "lab_technician"]).eq("is_active", true).order("full_name"),
@@ -51,7 +53,7 @@ export default async function TimetablePage() {
       if (!today.length) return null;
       return <section key={d} className="card"><h2 className="section-title">{d}</h2><ul className="divide-y divide-[var(--muted)] text-sm">
         {today.map((s) => <li key={s.id} className="flex flex-wrap items-center justify-between gap-2 py-2">
-          <span><span className="font-medium">{time(s.start_minute)}–{time(s.end_minute)}</span> {s.sections.courses.code} {s.sections.courses.title} ({s.sections.name})<br /><span className="text-[var(--ink-soft)]">{s.profiles.full_name}{s.room ? `, ${s.room}` : ""}</span></span>
+          <span><span className="font-medium">{time(s.start_minute)}–{time(s.end_minute)}</span> {s.sections.courses.code} {s.sections.courses.title} ({s.sections.name})<br /><span className="text-[var(--ink-soft)]">{teachers.get(s.faculty_id) ?? ""}{s.room ? `, ${s.room}` : ""}</span></span>
           {isAdmin && <ActionForm action={removeSlot}><input type="hidden" name="id" value={s.id} /><Submit className="btn btn-danger">Remove</Submit></ActionForm>}
         </li>)}
       </ul></section>;

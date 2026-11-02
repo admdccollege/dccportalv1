@@ -27,7 +27,7 @@ export default async function StructuresPage() {
           <div><label className="label" htmlFor="tier">Tier</label><select id="tier" name="tier" className="input">{TIERS.map((t) => <option key={t} value={t}>{TIER_LABEL[t]}</option>)}</select></div>
           <div><label className="label" htmlFor="academic_year_id">Academic year</label><select id="academic_year_id" name="academic_year_id" required className="input">{((years.data ?? []) as Opt[]).map((y) => <option key={y.id} value={y.id}>{y.label}</option>)}</select></div>
           <div><label className="label" htmlFor="program_id">Program</label><select id="program_id" name="program_id" className="input"><option value="">All programs in tier</option>{((programs.data ?? []) as Opt[]).map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select></div>
-          <div><label className="label" htmlFor="period_no">Year / Semester no.</label><input id="period_no" name="period_no" type="number" min="1" max="12" defaultValue="1" className="input" /></div>
+          <div><label className="label" htmlFor="period_no">Semester no. (HS: XI = 1, XII = 2)</label><input id="period_no" name="period_no" type="number" min="1" max="12" defaultValue="1" className="input" /></div>
           <div><label className="label" htmlFor="due_on">Due date</label><input id="due_on" name="due_on" type="date" className="input" /></div>
         </div>
         <fieldset><legend className="label">Amounts by fee head (₹)</legend><div className="form-grid">

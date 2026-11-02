@@ -15,6 +15,7 @@ const common = z.object({
   phone: optional,
   email: z.string().trim().email("Enter a valid email.").optional().or(z.literal("")).transform((v) => v || null),
   address: optional,
+  program_code: optional,
   residential_category: z.enum(["day_scholar", "hostel", "other"]).optional().or(z.literal("")).transform((v) => v || "day_scholar"),
   guardian_name: required("Guardian name"),
   guardian_relation: z.string().trim().optional().transform((v) => v || "Guardian"),

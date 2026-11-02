@@ -30,6 +30,7 @@ export function StudentForm() {
       </fieldset>
       <fieldset className="card"><legend className="section-title">Academic details</legend><div className="form-grid">
         <Field name="enrollment_no" label="Enrollment / Roll No" required />
+        <Field name="program_code" label="Program code" placeholder="As in Academic setup" />
         {tier === "higher_secondary" && <>
           <Choice name="class_level" label="Class" options={["XI", "XII"]} required />
           <Choice name="stream" label="Stream" options={["Arts", "Science", "Commerce"]} required />
